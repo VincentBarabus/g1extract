@@ -1,0 +1,451 @@
+//=============================================================
+// Common Data
+//=============================================================
+void AlignTo(int value)
+{
+    if((FTell()%value) > 0)
+    {
+        FSeek(FTell() + value - (FTell()%value));
+    }
+}
+
+struct BBOX
+{
+    float min[3];
+    float max[3];
+};
+
+struct MATRIX44
+{
+    float _m[16];
+};
+
+struct MATRIX34
+{
+    float scale[4];
+    float rotation[4];
+    float transform[4];
+};
+
+struct BONE
+{
+    float scale[3];
+    LONG parentIndex;
+    float rotation[4];
+    float transform[4];
+};
+
+
+//=============================================================
+// Mesh Data
+//=============================================================
+
+enum<DWORD> BUFFER_ID
+{
+    ID_00010001_BUFFER = 0x00010001,
+    ID_00010002_BUFFER = 0x00010002,
+    ID_MATERIAL_BUFFER = 0x00010003,
+    ID_VERTEX_BUFFER = 0x00010004,
+    ID_VERTEX_DESCRIPTOR_BUFFER = 0x00010005,
+    ID_00010006_BUFFER = 0x00010006,
+    ID_INDEX_BUFFER = 0x00010007,
+};
+
+enum<BYTE> ATTRIBUTE_FORMAT
+{
+	ATTRIBUTE_FORMAT_FLOAT1 = 0,
+	ATTRIBUTE_FORMAT_FLOAT2 = 1,
+	ATTRIBUTE_FORMAT_FLOAT3 = 2,
+	ATTRIBUTE_FORMAT_FLOAT4 = 3,
+	ATTRIBUTE_FORMAT_BYTE4 = 5,
+	ATTRIBUTE_FORMAT_COLOR = 13,
+};
+
+enum<WORD> VERTEX_ATTRIBUTE
+{
+    VERTEX_ATTRIBUTE_POSITION = 0,
+    VERTEX_ATTRIBUTE_BLENDWEIGHT = 1,
+    VERTEX_ATTRIBUTE_BLENDINDICES = 2,
+    VERTEX_ATTRIBUTE_NORMAL = 3,
+    VERTEX_ATTRIBUTE_PSIZE = 4,
+    VERTEX_ATTRIBUTE_TEXCOORD = 5,
+    VERTEX_ATTRIBUTE_TANGENT = 6,
+    VERTEX_ATTRIBUTE_BINORMAL = 7,
+    VERTEX_ATTRIBUTE_TESSFACTOR = 8,
+    VERTEX_ATTRIBUTE_COLOR = 10,
+    VERTEX_ATTRIBUTE_FOG = 11,
+    VERTEX_ATTRIBUTE_DEPTH = 12,
+    VERTEX_ATTRIBUTE_SAMPLE = 13
+};
+
+struct VERTEX_36
+{
+    float Position[3];
+    float Normal[3];
+    BYTE Color[4];
+    float TexCoord[2];
+};
+
+struct VERTEX_48
+{
+    float Position[3];
+    float BlendWeights[2];
+    BYTE BlendIndices[4];
+    float Normal[3];
+    BYTE Color[4];
+    float TexCoord[2];
+};
+
+struct VERTEX_52
+{
+    float Position[3];
+    float BlendWeights[3];
+    BYTE BlendIndices[4];
+    float Normal[3];
+    BYTE Color[4];
+    float TexCoord[2];
+};
+
+struct VERTEX_56
+{
+    float BlendWeights[3];
+    BYTE BlendIndices[4];
+    float Normal[3];
+    float Tangent[4];
+    BYTE Color[4];
+    float TexCoord[2];
+};
+
+
+struct VERTEX_68
+{
+    float Position[3];
+    float BlendWeights[3];
+    BYTE BlendIndices[4];
+    float Normal[3];
+    BYTE Color[4];
+    float TexCoord0[2];
+    float TexCoord1[2];
+    float TexCoord2[2];
+};
+
+struct VERTEX_12
+{
+    float Position[3];
+};
+
+struct VERTEX_72
+{
+    float BlendWeights[3];
+    BYTE BlendIndices[4];
+    float Normal[3];
+    float Tangent[4];
+    BYTE Color[4];
+    float TexCoord0[2];
+    float TexCoord1[2];
+    float TexCoord2[2];
+};
+
+struct VERTEX_84
+{
+    float Position[3];
+    float BlendWeights[3];
+    BYTE BlendIndices[4];
+    float Normal[3];
+    BYTE Color[4];
+    float TexCoord0[2];
+    float TexCoord1[2];
+    float TexCoord2[2];
+    float Tangent[4];
+};
+
+struct VERTEX_92
+{
+    float Position[3];
+    float BlendWeights[3];
+    BYTE BlendIndices[4];
+    float Normal[3];
+    BYTE Color[4];
+    float TexCoord0[2];
+    float TexCoord1[2];
+    float TexCoord2[2];
+    float TexCoord3[2];
+    float Tangent[4];
+};
+
+struct TYPE_00010001
+{
+    float fUnknown0[7];
+    DWORD dwUnknown0;
+    float fUnknown1[7];
+    DWORD dwUnknown1;
+};
+
+struct MATERIAL_PARAMETER
+{
+    DWORD Size;
+    DWORD NameSize;
+    DWORD Unk0;
+    WORD vSize;
+    WORD vType;
+    CHAR Name[NameSize];
+    float vData[vSize];
+};
+
+struct MATERIAL_BUFFER
+{
+    DWORD NumParameters;
+    MATERIAL_PARAMETER parameters[NumParameters] <optimize=false>;
+};
+
+struct VERTEX_BUFFER
+{
+    DWORD Unknown;
+    DWORD VertexStride;
+    DWORD NumVertices;
+    DWORD StreamIndex;
+    switch(VertexStride)
+    {
+        case 36:
+        VERTEX_36 VB[NumVertices];
+        break;
+    
+        case 48:
+        VERTEX_48 VB[NumVertices];
+        break;
+    
+        case 52:
+        VERTEX_52 VB[NumVertices];
+        break;
+
+        case 56: // used with VERTEX_12
+        VERTEX_56 VB[NumVertices];
+        break;
+
+        case 68:
+        VERTEX_68 VB[NumVertices];
+        break;
+        // <<< one mesh in two buffers
+        case 12:
+        VERTEX_12 VB[NumVertices];
+        break;
+
+        case 72:
+        VERTEX_72 VB[NumVertices];
+        break;
+        // >>>
+        case 84:
+        VERTEX_84 VB[NumVertices];
+        break;
+
+        case 92:
+        VERTEX_92 VB[NumVertices];
+        break;
+
+        default:
+        BYTE VB[NumVertices*VertexStride];
+        Printf("Unknown vertex format, VertexStride: %d\n", VertexStride);
+        break;
+    }
+};
+
+struct VERTEX_ELEMENT_DESCRIPTOR
+{
+	WORD streamIndex;
+	WORD offset;
+	ATTRIBUTE_FORMAT format;
+	VERTEX_ATTRIBUTE Usage;
+	BYTE UsageIndex;
+} ;
+
+struct VERTEX_DESCRIPTOR_BUFFER
+{
+    DWORD NumVBs;
+    DWORD VBIndices[NumVBs];
+    DWORD NumElements;
+    VERTEX_ELEMENT_DESCRIPTOR Elements[NumElements];
+};
+
+struct INDEX_BUFFER
+{
+        DWORD NumIndices;
+        DWORD SizeOfIndex;
+        DWORD DataOffset;
+        WORD IB[NumIndices];
+};
+
+typedef struct _G1M_BUFFER
+{
+    BUFFER_ID BufferID;
+    DWORD BufferDataSize;
+    DWORD NumDataSets;
+    switch(BufferID)
+    {
+        case ID_00010001_BUFFER:
+        DWORD dwUnknown;
+        TYPE_00010001 data_00010001[NumDataSets] <optimize=false>;
+        break;
+
+        case ID_MATERIAL_BUFFER:
+        MATERIAL_BUFFER materials[NumDataSets] <optimize=false>;
+        break;
+
+        case ID_VERTEX_BUFFER:
+        VERTEX_BUFFER vertexBuffers[NumDataSets] <optimize=false>;
+        break;
+
+        case ID_VERTEX_DESCRIPTOR_BUFFER:
+        VERTEX_DESCRIPTOR_BUFFER vertexDescriptorBuffers[NumDataSets] <optimize=false>;
+        break;
+        
+        case ID_INDEX_BUFFER:
+        INDEX_BUFFER indexBuffers[NumDataSets] <optimize=false>;
+        break;
+
+        default:
+        BYTE Data[BufferDataSize - (sizeof(DWORD)*3)];
+        break;
+    }
+
+} G1M_BUFFER <read=ReadBuffer>;
+
+string ReadBuffer(G1M_BUFFER& b)
+{
+    string s;
+    switch(b.BufferID)
+    {
+        case ID_MATERIAL_BUFFER:
+        s = "Material Buffer";
+        break;
+
+        case ID_VERTEX_BUFFER:
+        s = "Vertex Buffer";
+        break;
+
+        case ID_INDEX_BUFFER:
+        s = "Index Buffer";
+        break;
+
+        case ID_VERTEX_DESCRIPTOR_BUFFER:
+        s = "Vertex Descriptor Buffer";
+        break;
+
+        default:
+        SPrintf(s, "Unknown Buffer %x", b.BufferID);
+        break;
+    }
+
+    return s;
+}
+
+
+enum<QWORD> CONTAINER_ID
+{
+    ID_G1M_0036 = 0x47314D5F30303336,
+    ID_G1MF0023 = 0x47314D4630303233,
+    ID_G1MS0032 = 0x47314D5330303332,
+    ID_G1MM0020 = 0x47314D4D30303230,
+    ID_G1MG0044 = 0x47314D4730303434,
+    ID_EXTR0010 = 0x4558545230303130,
+};
+
+//=============================================================
+// G1M Common Data
+//=============================================================
+struct G1MS0032_CONTAINER
+{
+    DWORD Size;
+    float Unknown;
+    SHORT NumBones;
+    SHORT NumIndices;
+    SHORT NumSkins;
+    SHORT Num5;
+    SHORT SkinOffsets[NumSkins];
+    SHORT Indices[NumIndices];
+    AlignTo(4);
+    if(NumBones == 1)
+    {
+        MATRIX34 Pose;
+    }
+    else
+    {
+        BONE Bones[NumBones];
+    }
+};
+
+struct G1MM0020_CONTAINER
+{
+    DWORD NumBones;
+    MATRIX44 Bones[NumBones];
+};
+
+struct G1MG0044_CONTAINER
+{
+    BYTE Plarform[8];
+    BBOX BoundingBox;
+    DWORD NumBuffers;
+    G1M_BUFFER Buffers[NumBuffers] <optimize=false>;
+};
+
+typedef struct _G1M_CONTAINER
+{
+    CONTAINER_ID Magic <format=hex>;
+    DWORD Size;
+    
+    switch(Magic)
+    {
+        case ID_G1MS0032:
+        G1MS0032_CONTAINER Data;
+        break;
+
+        case ID_G1MM0020:
+        G1MM0020_CONTAINER Data;
+        break;
+
+        case ID_G1MG0044:
+        G1MG0044_CONTAINER Data;
+        break;
+
+        default:
+        BYTE Data[Size - 12];
+        break;
+    }
+} G1M_CONTAINER <read=ReadContainer>;
+
+
+string ReadContainer(G1M_CONTAINER& c)
+{
+    string s;
+    switch(c.Magic)
+    {
+        case ID_G1M_0036:
+        s = "G1M_0036";
+        break;
+
+        case ID_G1MF0023:
+        s = "G1MF0023";
+        break;
+
+        case ID_G1MS0032:
+        s = "G1MS0032 - Skin Data";
+        break;
+
+        case ID_G1MM0020:
+        s = "G1MM0020 - Bones Data";
+        break;
+
+        case ID_G1MG0044:
+        s = "G1MG0044 - Mesh Data";
+        break;
+
+        case ID_EXTR0010:
+        s = "EXTR0010";
+        break;
+
+        default:
+        s = "Unknown";
+        break;
+    }
+
+    return s;
+}

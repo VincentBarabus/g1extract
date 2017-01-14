@@ -1,0 +1,72 @@
+//--------------------------------------
+//--- 010 Editor v3.0.6 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+struct DDS_PIXELFORMAT
+{
+  UINT dwSize;
+  UINT dwFlags <format=hex>;
+  UINT dwFourCC <format=hex>;
+  UINT dwRGBBitCount;
+  UINT dwRBitMask <format=hex>;
+  UINT dwGBitMask <format=hex>;
+  UINT dwBBitMask <format=hex>;
+  UINT dwABitMask <format=hex>;
+};
+
+struct DDS_HEADER
+{
+  DWORD           dwSize;
+  DWORD           dwFlags <format=hex>;
+  DWORD           dwHeight;
+  DWORD           dwWidth;
+  DWORD           dwLinearSize;
+  DWORD           dwDepth;
+  DWORD           dwMipMapCount;
+  DWORD           dwReserved1[11];
+  DDS_PIXELFORMAT ddpf;
+  DWORD           dwCaps;
+  DWORD           dwCaps2;
+  DWORD           dwCaps3;
+  DWORD           dwCaps4;
+  DWORD           dwReserved2;
+};
+
+typedef struct _Pixel
+{
+    WORD r:5;
+    WORD g:5;
+    WORD b:5;
+    WORD a:1;
+} Pixel <read=ReadPixel>;
+
+string ReadPixel(Pixel& p)
+{
+    string s;
+    SPrintf(s, "%f, %f, %f, %f", ((float)p.r)/31.0, ((float)p.g)/31.0, ((float)p.b)/31.0, p.a);
+    return s;
+}
+
+DWORD dwMagicNumber <format=hex>;
+DDS_HEADER Header;
+// BigEndian();
+/*
+local int dataSize = 0;
+local int i = 0;
+local int layer = 0;
+for(i = 0; i < Header.dwMipMapCount; i++)
+{
+    layer = (Header.dwWidth*Header.dwHeight / Pow(4, i)) / 2;
+    layer = (layer  > 8) ? layer : 8;
+    dataSize += layer;
+    Printf("layer %d: %d\n", i, layer);
+}
+Printf("dataSize = %d\n", dataSize);
+// dataSize = 2344;
+*/
+BYTE Data[Header.dwLinearSize];
+// Pixel Data[Header.dwLinearSize / 2];

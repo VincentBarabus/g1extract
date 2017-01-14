@@ -1,0 +1,17 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+
+struct GZChank
+{
+    DWORD Size;
+    BYTE Data[Size];
+};
+
+GZChank files[12] <optimize=false>;

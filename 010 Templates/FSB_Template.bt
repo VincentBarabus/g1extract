@@ -1,0 +1,52 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+void Aling(int value)
+{
+    local int pos = FTell();
+    if(pos%value)
+    BYTE Dup[value - pos%value];
+}
+
+struct Chank
+{
+    DWORD Magik;
+    DWORD Unknown00;
+    DWORD Unknown01;
+    DWORD Size;
+    DWORD Unknown03;
+    DWORD Unknown04;
+    DWORD Unknown05;
+    DWORD Unknown06;
+    DWORD Unknown07;
+    DWORD Unknown08;
+    DWORD Unknown09;
+    DWORD Unknown10;
+    WORD Unknown11;
+    CHAR FileName[30];
+    DWORD Unknown19;
+    DWORD Size2;
+    DWORD Unknown21;
+    DWORD Unknown22;
+    DWORD Unknown23;
+    DWORD Unknown24;
+    DWORD Unknown25;
+    DWORD Unknown26;
+    DWORD Unknown27;
+    DWORD Unknown28;
+    DWORD DataOffset;
+    DWORD Unknown30;
+    // FSeek(FTell() + DataOffset - 0x50);
+    if(DataOffset > 0x50)
+    BYTE SynkData[DataOffset - 0x50];
+    BYTE Data[Size];
+    // BYTE Dup0[896];
+    Aling(0x800);
+};
+
+Chank files[2234] <optimize=false>;

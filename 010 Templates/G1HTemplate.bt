@@ -1,0 +1,40 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+#include "G1MTypes.bt"
+
+QWORD Magic <format=hex>;
+DWORD FileSize;
+WORD Unknown;
+WORD NumSubContainers;
+DWORD SubContainerOffsets[NumSubContainers];
+AlignTo(16);
+typedef struct _G1H_CONTAINER
+{
+    QWORD Magic <format=hex>;
+    DWORD Size;
+    WORD Unknown0;
+    WORD Unknown1;
+    WORD NumSubContainers;
+    WORD Unknown2;
+    DWORD SubContainerOffsets[NumSubContainers];
+    struct
+    {
+        QWORD Magic <format=hex>;
+        DWORD FileSize;
+        DWORD DataOffset;
+        DWORD Unknown;
+        DWORD NumContainers;
+    
+        G1M_CONTAINER containers[NumContainers] <optimize=false>;
+    } G1M[NumSubContainers] <optimize=false>;
+    AlignTo(16);
+} G1H_CONTAINER;
+
+G1H_CONTAINER container[3] <optimize=false>;

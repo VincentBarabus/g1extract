@@ -1,0 +1,17 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+#include "G1MTypes.bt"
+
+QWORD Magic <format=hex>;
+DWORD FileSize;
+DWORD DataOffset;
+DWORD Unknown;
+DWORD NumContainers;
+G1M_CONTAINER containers[NumContainers] <optimize=false>;

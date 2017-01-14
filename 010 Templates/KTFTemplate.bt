@@ -1,0 +1,76 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+QWORD Magic <format=hex>;
+DWORD NumDataSets;
+DWORD FileSize;
+DWORD Tex0Ofset <format=hex>;
+DWORD Tex1Ofset <format=hex>;
+DWORD UnknownOfset <format=hex>;
+DWORD KHMOffset <format=hex>;
+DWORD dwUnknowns0[7];
+DWORD UT0DataSize <format=hex>;
+DWORD IndicesDataSize <format=hex>;
+struct UT0
+{
+    DWORD f0;
+    DWORD f1;
+    DWORD f2;
+    DWORD f3;
+};
+
+FSeek(0x17C4);
+UT0 Data[UT0DataSize/16];
+FSeek(0xE964);
+WORD Indices[IndicesDataSize/2];
+
+
+FSeek(Tex0Ofset);
+struct
+{
+    QWORD Magic;
+    DWORD FileSize;
+    BYTE Data[FileSize-12];
+} Tex0;
+
+FSeek(Tex1Ofset);
+struct
+{
+    QWORD Magic;
+    DWORD FileSize;
+    BYTE Data[FileSize-12];
+} Tex1;
+FSeek(KHMOffset);
+struct
+{
+    QWORD Magic;
+    DWORD NumDataSets;
+    DWORD FileSize;
+    BYTE Data[FileSize-16];
+} KHM;
+
+
+/*
+/*
+struct
+{
+    QWORD Magic <format=hex>;
+    DWORD NumDataSets;
+    DWORD FileSize;
+    WORD Width;
+    WORD Height;
+    WORD Unknown;
+    WORD Unknown;
+    WORD Unknown;
+    WORD Unknown;
+    WORD Unknown;
+    WORD Unknown;
+    BYTE Data[FileSize-32];
+} KHM;
+*/

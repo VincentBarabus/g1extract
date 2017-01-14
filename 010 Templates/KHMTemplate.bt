@@ -1,0 +1,21 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+QWORD Magic <format=hex>;
+DWORD NumDataSets;
+DWORD FileSize;
+WORD Width;
+WORD Height;
+WORD Unknown;
+WORD Unknown;
+WORD Unknown;
+WORD Unknown;
+WORD Unknown;
+WORD Unknown;
+BYTE Data[FileSize-32];

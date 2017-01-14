@@ -1,0 +1,73 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+
+enum<BYTE> TexFormat
+{
+    RGBA = 1,
+    DXT1 = 6,
+    DXT5 = 8,
+};
+
+struct TextureDescriptor
+{
+    BYTE Mipmaps;
+    TexFormat Format;
+    BYTE PowW : 4;
+    BYTE PowH : 4;
+    BYTE Unknown;
+    DWORD Unknown;
+    DWORD Unknown;
+    DWORD Unknown;
+    DWORD Unknown;
+};
+
+struct Texture
+{
+    TextureDescriptor descriptor;
+    local int j;
+    local int mipSize;
+    for(j = 0; j < descriptor.Mipmaps; j++)
+    {
+        mipSize = (1 << (descriptor.PowW - j)) * (1 << (descriptor.PowH - j));
+        switch(descriptor.Format)
+        {
+            case RGBA:
+            mipSize *= 4;
+            break;
+
+            case DXT1:
+            mipSize /= 2;
+            mipSize = (mipSize >= 8) ? mipSize : 8;
+            break;
+
+            case DXT5:
+            mipSize = (mipSize >= 16) ? mipSize : 16;
+            break;
+        }
+        struct { BYTE Data[mipSize]; } MipLevel;
+    }
+};
+
+QWORD Magic;
+DWORD FileSize;
+DWORD DataOffset;
+DWORD NumTextures;
+DWORD Unknown;
+
+FSeek(DataOffset);
+DWORD offsets[NumTextures] <format=hex>; // from here or sizes
+
+
+local int i = 0;
+for(i = 0; i < NumTextures; i++)
+{
+    FSeek(offsets[i] + DataOffset);
+    Texture texture;
+}

@@ -1,0 +1,51 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+#include "G1MTypes.bt"
+
+typedef struct _OPL2PrefabInstance
+{
+    float position[4];
+    float rotation[4];
+    float scale[3];
+    DWORD ID <format=hex>;
+    DWORD leIDSize;
+    BYTE leID[leIDSize];
+    BYTE Reserved[32];
+
+} OPL2PrefabInstance <read=ReadNodeDescriptor>;
+
+string ReadPrefabInstance(OPL2PrefabInstance& i)
+{
+    string s;
+    SPrintf(s, "ID: 0x%x, Extended data: %d", i.ID, i.leIDSize);
+    return s;
+}
+
+typedef struct _OPL2Prefab
+{
+    DWORD NameSize;
+    CHAR Name[NameSize];
+    DWORD Index;
+    DWORD Reserved[4];
+    DWORD Index2;
+    DWORD NumInstances;
+    OPL2PrefabInstance Instances[NumInstances] <optimize=false>;
+} OPL2Prefab <read=ReadNode>;
+
+string ReadNode(OPL2Prefab& p)
+{
+    string s;
+    SPrintf(s, "Name: %s", p.Name);
+    return s;
+}
+
+
+DWORD Num;
+OPL2Prefab nodes[Num] <optimize=false>;

@@ -1,0 +1,62 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+
+struct C1COHeader
+{
+    DWORD Magic;
+    DWORD Unknown0;
+    DWORD Unknown1;
+    DWORD FileSize;
+};
+
+struct BVHHeader
+{
+    DWORD Magic;
+    DWORD Unknown0;
+    DWORD Unknown1;
+    DWORD FileSize;
+};
+
+struct BVHNode
+{
+    float min[4];
+    float max[4];
+    DWORD data[4];
+};
+
+struct BVHTriangle
+{
+    WORD indices[3];
+};
+
+struct BVHVertex
+{
+    float v[4];
+};
+
+
+C1COHeader FHeader;
+BVHHeader Header;
+DWORD NumNodes;
+DWORD NodesOffset <format=hex>;
+DWORD NumTriangles;
+DWORD TrianglesOffset <format=hex>;
+DWORD NumVertices;
+DWORD VerticesOffset <format=hex>;
+DWORD NumData;
+DWORD DataOffset <format=hex>;
+// Hierarhy
+FSeek(NodesOffset+sizeof(C1COHeader));
+BVHNode nodes[NumNodes];
+// Physics model
+FSeek(TrianglesOffset+sizeof(C1COHeader));
+BVHTriangle Triangles[NumTriangles];
+FSeek(VerticesOffset+sizeof(C1COHeader));
+BVHVertex Positions[NumVertices];

@@ -1,0 +1,22 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+local DWORD lSize = -1;
+
+struct Chank
+{
+    DWORD Size;
+    BYTE Data[Size];
+};
+
+while(lSize)
+{
+    Chank chank;
+    lSize = chank.Size;
+}

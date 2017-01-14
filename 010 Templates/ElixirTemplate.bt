@@ -1,0 +1,39 @@
+//--------------------------------------
+//--- 010 Editor v6.0.2 Binary Template
+//
+// File:
+// Author:
+// Revision:
+// Purpose:
+//--------------------------------------
+BigEndian();
+
+struct Entry
+{
+    DWORD ID <format=hex>; // Calculated with file and data offsets
+    DWORD Size;
+    char FileName[48];
+};
+
+struct Header
+{
+    DWORD Magic;
+    DWORD Endian <format=hex>;
+    DWORD DataSize;
+    DWORD HeaderSize;
+    DWORD FileTableSize;
+    DWORD nFiles;
+    DWORD Version;
+};
+
+Header header;
+Entry entry[header.nFiles];
+
+// BYTE Data[DataSize];
+//*
+local int i = 0;
+for(i = 0; i < header.nFiles; i++)
+{
+    struct { BYTE Data[entry[i].Size]; } file;
+}
+/*/
